@@ -1,0 +1,11 @@
+probe kernel.function("*@net/socket.c").call {
+  if (("exec" == @1 && execname() == @2) || ("pid" == @1 && (pid() == strtol(@2, 10) || ppid() == strtol(@2, 10)))) {
+    printf("%s -> %s\n", thread_indent(1), ppfunc())
+  }
+}
+
+probe kernel.function("*@net/socket.c").return {
+  if (("exec" == @1 && execname() == @2) || ("pid" == @1 && (pid() == strtol(@2, 10) || ppid() == strtol(@2, 10)))) {
+    printf("%s <- %s\n", thread_indent(-1), ppfunc())
+  }
+}
